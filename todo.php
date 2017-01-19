@@ -69,6 +69,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 			$name = $result["task_name"];
 			echo "$name<br>$desc<br><br>";
 		}
+	} else if ($_POST["submit"] == "View Completed Tasks"){
+		$sql = "SELECT l.task_name, i.complete_order FROM All_Tasks l, Inactive_Tasks i WHERE l.task_id = i.task_id ORDER BY complete_order ASC";
+		$result = $conn->query($sql);
+		if (!$result){
+			echo $conn->error;
+		} else {
+			echo "<h2>Completed Tasks</h2>";
+			if ($result->num_rows > 0) {
+				while($row = $result->fetch_assoc()) {
+					echo $row["task_name"] . "<br>";
+				}
+			} else {
+				echo "No completed tasks<br>";
+			}
+			echo "<br>";
+		}
 	}
 }
 
@@ -97,9 +113,13 @@ $conn->close();
 
 <br>
 <form method="post" action="">
-Task Name:<br><input type="text" name="name"><br>
+Task Name:<br><input type="text" name="name" required><br>
 Description:<br><textarea rows="4" cols="50" name="description"></textarea><br>
 <input type="submit" name="submit" value="Create Task">
+</form>
+<br><br>
+<form method="post" action="">
+<input type="submit" name="submit" value="View Completed Tasks">
 </form>
 </body>
 </html>
